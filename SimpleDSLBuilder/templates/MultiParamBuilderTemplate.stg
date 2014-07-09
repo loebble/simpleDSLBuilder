@@ -1,0 +1,67 @@
+BuilderTemplate(packageName, builder) ::= <<
+
+package <packageName>;
+
+public class <builder.dslName> {
+
+	<builder.chainMethods.keys:{k|<createAttributes(builder.chainMethods.(k))>}>
+	private <builder.dslName>(){}
+	
+	<createEPMethod(builder.entryPointMethod, builder.dslName)>
+	
+	<builder.chainMethods.keys:{k |<createChainMethod(k,builder.dslName,builder.chainMethods.(k))>}>
+	
+	<createBuildMethod(builder.buildMethodName, builder.dslName)>
+
+}
+>>
+
+createEPMethod(methodHeader, builderName) ::= <<
+    /**
+    *
+    * Entry point method. This method provides access to the DSL.
+    * Use a static import in your code to use the DSL without context.
+    */
+    public static <builderName> <methodHeader>() {
+    	<builderName> builder = new <builderName>();
+    	return builder;
+    }
+>>
+
+
+createChainMethod(methodName, builderName, params) ::= <<
+
+    /**
+    * Generated chain method.
+    *
+    */
+    public <builderName> <methodName>(<first(params.keys):{p|<createParameters(p,params.(p))>}><rest(params.keys):{p|, <createParameters(p,params.(p))>}>) {
+    	//TODO auto generated chain method codeblock
+    	<params.keys:copyVarValue()>
+    	return this;
+    }
+    
+>>
+
+createBuildMethod(methodName, builderName) ::= <<
+    /**
+    *
+    * Generated build method
+    */
+    public <builderName> <methodName>() {
+    	//TODO auto generated build method codeblock
+    	return this;
+    }
+>>
+
+createParameters(parameterName, parameterType) ::= <<
+   <parameterType> <parameterName>
+>>
+
+createAttributes(parameters) ::= <<
+<parameters:{p|private <parameters.(p)> <p>;<\n>}>
+>>
+
+copyVarValue(var)::= <<
+this.<var> = <var>; <\n>
+>>

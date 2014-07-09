@@ -1,0 +1,53 @@
+BuilderTemplate(packageName, builder) ::= <<
+
+package <packageName>;
+
+public class <builder.dslName> {
+
+	private <builder.dslName>(){}
+	
+	<createEPMethod(builder.entryPointMethod, builder.dslName)>
+	
+	<builder.chainMethods:createChainMethod(builder.dslName)>
+	
+	<createBuildMethod(builder.buildMethodName, builder.dslName)>
+
+}
+>>
+
+createEPMethod(methodHeader, builderName) ::= <<
+    /**
+    *
+    * Entry point method. This method provides access to the DSL.
+    * Use a static import in your code to use the DSL without context.
+    */
+    public static <builderName> <methodHeader>() {
+    	<builderName> builder = new <builderName>();
+    	return builder;
+    }
+>>
+
+
+createChainMethod(methodHeader, builderName) ::= <<
+
+    /**
+    * Generated chain method.
+    *
+    */
+    public <builderName> <methodHeader> {
+    	//TODO auto generated chain method codeblock
+    	return this;
+    }
+    
+>>
+
+createBuildMethod(methodHeader, builderName) ::= <<
+    /**
+    *
+    * Generated build method
+    */
+    public <builderName> <methodHeader>() {
+    	//TODO auto generated build method codeblock
+    	return this;
+    }
+>>

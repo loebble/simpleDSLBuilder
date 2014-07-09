@@ -1,0 +1,90 @@
+BuilderTemplate(packageName, builder) ::= <<
+
+package <packageName>;
+
+<builder.imports:{imp| import <imp>;}>
+
+public class <builder.dslName> {
+
+	<builder.chainMethods.keys:{k|<createFinalAttributes(builder.chainMethods.(k))>}>
+
+	public static class <builder.dslName>Builder{
+
+		<builder.chainMethods.keys:{k|<createAttributes(builder.chainMethods.(k))>}>
+		private <builder.dslName>Builder(){}
+	
+		<createEPMethod(builder.entryPointMethod, builder.dslName)>
+	
+		<builder.chainMethods.keys:{k |<createChainMethod(k,builder.dslName,builder.chainMethods.(k))>}>
+	
+		<createBuildMethod(builder.buildMethodName, builder.dslName)>
+	}
+	
+	private <builder.dslName>(<builder.dslName>Builder builder){
+		<builder.chainMethods.keys:{k | <copyBuilderVarValue(builder.chainMethods.(k))>}>
+	}
+}
+>>
+
+
+
+
+
+
+createEPMethod(methodHeader, builderName) ::= <<
+    /**
+    *
+    * Entry point method. This method provides access to the DSL.
+    * Use a static import in your code to use the DSL without context.
+    */
+    public static <builderName>Builder <methodHeader>() {
+    	<builderName>Builder builder = new <builderName>Builder();
+    	return builder;
+    }
+>>
+
+
+createChainMethod(methodName, builderName, params) ::= <<
+
+    /**
+    * Generated chain method.
+    *
+    */
+    public <builderName>Builder <methodName>(<first(params.keys):{p|<createParameters(p,params.(p))>}><rest(params.keys):{p|, <createParameters(p,params.(p))>}>) {
+    	//TODO auto generated chain method codeblock
+    	<params.keys:copyVarValue()>
+    	return this;
+    }
+    
+>>
+
+createBuildMethod(methodName, builderName) ::= <<
+    /**
+    *
+    * Generated build method
+    */
+    public <builderName> <methodName>() {
+    	//TODO auto generated build method codeblock
+    	return new <builderName>(this);
+    }
+>>
+
+createParameters(parameterName, parameterType) ::= <<
+   <parameterType> <parameterName>
+>>
+
+createAttributes(parameters) ::= <<
+<parameters:{p|private <parameters.(p)> <p>;<\n>}>
+>>
+
+createFinalAttributes(parameters) ::= <<
+<parameters:{p|private final <parameters.(p)> <p>;<\n>}>
+>>
+
+copyVarValue(var)::= <<
+this.<var> = <var>; <\n>
+>>
+
+copyBuilderVarValue(paramMap)::= <<
+<paramMap:{p|this.<p> = builder.<p>; <\n>}>
+>>
