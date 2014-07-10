@@ -1,4 +1,4 @@
-package de.htwg.SimpleDSLBuilder.Test;
+package de.htwg.SimpleDSLBuilder.Model;
 
 import de.htwg.SimpleDSLBuilder.Creator.*;
 

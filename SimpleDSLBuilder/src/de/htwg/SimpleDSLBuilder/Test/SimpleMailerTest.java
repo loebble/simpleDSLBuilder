@@ -1,6 +1,6 @@
 package de.htwg.SimpleDSLBuilder.Test;
 
-import static de.htwg.SimpleDSLBuilder.Test.DSLModels.createSimpleBuilderModel;
+import static de.htwg.SimpleDSLBuilder.Model.DSLModels.createSimpleBuilderModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
