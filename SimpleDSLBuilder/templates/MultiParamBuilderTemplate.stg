@@ -1,5 +1,5 @@
 BuilderTemplate(packageName, builder) ::= <<
-
+<! Template for multipleParameter Builder>
 package <packageName>;
 
 public class <builder.dslName> {

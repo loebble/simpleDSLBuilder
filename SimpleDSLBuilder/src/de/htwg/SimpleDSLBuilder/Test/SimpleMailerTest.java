@@ -6,10 +6,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.StringRenderer;
 
 import de.htwg.SimpleDSLBuilder.Creator.SimpleBuildPatternCreator;
 
@@ -24,6 +26,7 @@ public class SimpleMailerTest {
 			templateDirecorty.mkdirs();
 		} else System.out.println("exists "+templateDirecorty.getAbsolutePath());
 		STGroup group = new STGroupFile(templateDirecorty+"/SimpleBuilderTemplate.stg");
+		group.registerRenderer(String.class, new StringRenderer());
 		ST simpleBT = group.getInstanceOf("BuilderTemplate");
 		SimpleBuildPatternCreator builder = createSimpleBuilderModel();
 		String targetPackage = "de.htwg.generated.MailDSL";
@@ -39,7 +42,7 @@ public class SimpleMailerTest {
 				targetDirectory.mkdirs();
 			}
 			System.out.println(pathForDSL); 
-			PrintWriter writer = new PrintWriter(pathForDSL+"\\"+builder.getDslName()+".java");
+			PrintWriter writer = new PrintWriter(pathForDSL+"\\"+builder.getDslName()+"Builder.java");
 			writer.print(res);
 			writer.close();
 		} catch (FileNotFoundException e) {
@@ -47,4 +50,12 @@ public class SimpleMailerTest {
 		}
 	}
 	
+	static void printChainMethods(Map<String,String> chains){
+		for (Map.Entry<String,String> entry : chains.entrySet())
+        {
+        	String methodName= (String) entry.getKey();
+        	String paramType= (String) entry.getValue();
+        	System.out.print(methodName +"-"+ paramType );
+        }
+	}
 }

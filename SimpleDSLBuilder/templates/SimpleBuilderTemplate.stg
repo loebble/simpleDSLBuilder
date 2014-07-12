@@ -1,16 +1,21 @@
 BuilderTemplate(packageName, builder) ::= <<
-
+<! Template for SimpleBuilder with extern Model which has to be in same package than given to the template 
+next Step: with Introspection looking for attributes and setters !>
 package <packageName>;
 
-public class <builder.dslName> {
+<builder.imports:{imp| import <imp>;}>
 
-	private <builder.dslName>(){}
+public class <builder.dslName>Builder {
+
+	private <builder.dslName>Builder(){}
+	
+	<builder.chainMethods.keys:{k|<createAttributes(k,builder.chainMethods.(k))>}>
 	
 	<createEPMethod(builder.entryPointMethod, builder.dslName)>
 	
-	<builder.chainMethods:createChainMethod(builder.dslName)>
+	<builder.chainMethods.keys:{k |<createChainMethod(builder.dslName,k,builder.chainMethods.(k))>}>
 	
-	<createBuildMethod(builder.buildMethodName, builder.dslName)>
+	<createBuildMethod(builder.buildMethodName, builder.dslName,builder.chainMethods)>
 
 }
 >>
@@ -21,33 +26,40 @@ createEPMethod(methodHeader, builderName) ::= <<
     * Entry point method. This method provides access to the DSL.
     * Use a static import in your code to use the DSL without context.
     */
-    public static <builderName> <methodHeader>() {
-    	<builderName> builder = new <builderName>();
+    public static <builderName>Builder <methodHeader>() {
+    	<builderName>Builder builder = new <builderName>Builder();
     	return builder;
     }
 >>
 
 
-createChainMethod(methodHeader, builderName) ::= <<
+createChainMethod(builderName,methodName, parameterType) ::= <<
 
     /**
     * Generated chain method.
     *
     */
-    public <builderName> <methodHeader> {
+    public <builderName>Builder <methodName> (<parameterType> val) {
     	//TODO auto generated chain method codeblock
+    	this.<methodName><parameterType> = val;
     	return this;
     }
     
 >>
 
-createBuildMethod(methodHeader, builderName) ::= <<
+createBuildMethod(methodHeader, builderName, chainMethods) ::= <<
     /**
     *
     * Generated build method
     */
     public <builderName> <methodHeader>() {
     	//TODO auto generated build method codeblock
-    	return this;
+    	<builderName> modelInstance = new <builderName>();
+    	<chainMethods.keys:{m |modelInstance.set<m;format="cap"><chainMethods.(m)>(this.<m><chainMethods.(m)>); <\n>}>
+    	return modelInstance;
     }
+>>
+
+createAttributes(methodName, parameterType) ::= <<
+private <parameterType> <methodName><parameterType>;<\n>
 >>

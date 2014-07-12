@@ -5,10 +5,10 @@ import de.htwg.SimpleDSLBuilder.Creator.*;
 public class DSLModels {
 	
 	private final static String simpleMailerDescription = "dslName=Mailer"
-			+ ".ep=mail.m=from(String sender)"
-			+ ".m=to(String receiver)"
-			+ ".m=subject(String subject)"
-			+ ".m=body(String text)"
+			+ ".ep=mail.m=from(String)"
+			+ ".m=to(String)"
+			+ ".m=subject(String)"
+			+ ".m=body(String)"
 			+ ".build=send";
 	
 	private final static String multiParamMailerDescription = "dslName=MultiParamMailer"
