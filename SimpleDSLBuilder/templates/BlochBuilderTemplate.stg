@@ -1,5 +1,5 @@
 BuilderTemplate(packageName, builder) ::= <<
-<! Template for SimpleBuilder for NEW Model with nested Builder>
+<! Template for SimpleBuilder for NEW Model with nested Builder !>
 package <packageName>;
 
 <builder.imports:{imp| import <imp>;}>
