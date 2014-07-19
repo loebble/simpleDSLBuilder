@@ -13,17 +13,18 @@ import java.util.regex.Pattern;
  * 
  *
  */
-public class ScopeBuildPatternCreator {
-	public static final String REGEX_PATTERN= "dslName=\\w+\\.ep=\\w+()+\\.imp=\\((\\w+(\\.)?)+(\\s?\\,\\s? (\\w+(\\.)?)+)*\\)\\.build=\\w+";
+public class SimpleScopeBuildPatternCreator {
+	public static final String REGEX_PATTERN= "dslName=\\w+\\.ep=\\w+(\\.m=\\w+\\(\\w+\\))+(\\.om=\\w+\\(\\w+\\))*\\.imp=\\((\\w+(\\.)?)+(\\s?\\,\\s? (\\w+(\\.)?)+)*\\)\\.build=\\w+";
 	private static final String NO_MATCH = "Given String does not match BuildPatternCreator Regex Pattern: \n" +REGEX_PATTERN;
+	private static final String WRONG_DECLARATION = "Method not declared correctly";
+	
 	
 	public static final String DSL_NAME = "dslName=\\w+";
 	public static final String ENTRY_POINT = "\\.ep=\\w+";
-	public static final String METHODS = "\\.m=\\w+:\\w+\\(\\w+(\\s?\\,\\s?\\w+\\??)*\\)";
-	public static final String PARAMETER_TYPE = ":\\w+";
-	public static final String METHOD_NAME = "=\\w+";
-	public static final String NEXT_SCOPES = "\\(\\w+(\\s?\\,\\s?\\w+\\??)*\\)";
-	public static final String SINGLE_SCOPE = "\\w+\\??";
+	public static final String METHODS = "\\.m=\\w+\\(\\w+\\)";
+	public static final String OPTIONAL_METHODS = "\\.om=\\w+\\(\\w+\\)";
+	public static final String PARAMETER_TYPE = "\\(\\w+\\)";
+	public static final String METHOD_NAME = "\\w+\\(";
 	public static final String BUILD = "\\.build=\\w+";
 	public static final String IMPORT = "\\.imp=\\((\\w+(\\.)?)+(\\s?\\,\\s? (\\w+(\\.)?)+)*\\)";
 	public static final String IMPORT_PARAMETER = "(\\w+(\\.)?)+";
@@ -31,10 +32,9 @@ public class ScopeBuildPatternCreator {
 	private static final Pattern NAME_PATTERN = Pattern.compile(DSL_NAME, Pattern.CASE_INSENSITIVE);
 	private static final Pattern EP_PATTERN = Pattern.compile(ENTRY_POINT, Pattern.CASE_INSENSITIVE);
 	private static final Pattern METHOD_PATTERN= Pattern.compile(METHODS, Pattern.CASE_INSENSITIVE);
+	private static final Pattern OPTIONAL_METHODS_PATTERN= Pattern.compile(OPTIONAL_METHODS, Pattern.CASE_INSENSITIVE);
 	private static final Pattern METHOD_NAME_PATTERN= Pattern.compile(METHOD_NAME, Pattern.CASE_INSENSITIVE);
 	private static final Pattern PARAMETER_TYPE_PATTERN= Pattern.compile(PARAMETER_TYPE, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NEXT_SCOPES_PATTERN= Pattern.compile(NEXT_SCOPES, Pattern.CASE_INSENSITIVE);
-	private static final Pattern SINGLE_SCOPE_PATTERN= Pattern.compile(SINGLE_SCOPE, Pattern.CASE_INSENSITIVE);
 	private static final Pattern BUILD_PATTERN = Pattern.compile(BUILD, Pattern.CASE_INSENSITIVE);
 	private static final Pattern IMPORT_PATTERN = Pattern.compile(IMPORT, Pattern.CASE_INSENSITIVE);
 	private static final Pattern IMPORT_PARAMETER_PATTERN = Pattern.compile(IMPORT_PARAMETER, Pattern.CASE_INSENSITIVE);
@@ -43,6 +43,7 @@ public class ScopeBuildPatternCreator {
 	private Matcher nameMatcher;
 	private Matcher epMatcher;
 	private Matcher methodMatcher;
+	private Matcher optionalMethodMatcher;
 	private Matcher buildMatcher;
 	private Matcher methodNameMatcher;
 	private Matcher importMatcher;
@@ -51,28 +52,25 @@ public class ScopeBuildPatternCreator {
 	private String dslName;
 	private String entryPointMethod;
 	private Map<String,String> chainMethods;
-	private Map<String, LinkedHashMap<String, Boolean>> nextScopeMethods;
+	private Map<String,String> optionalMethods;
+	private Map<String,String> nextMethods;
 	private String buildMethodName;
 	private ArrayList<String> imports;
 	
-	private ScopeBuildPatternCreator(){}
+	private SimpleScopeBuildPatternCreator(){}
 	
-	public static ScopeBuildPatternCreator getInstance(String languageDescr){
+	public static SimpleScopeBuildPatternCreator getInstance(String languageDescr){
 		if(!languageDescr.matches(REGEX_PATTERN)){
 			throw new IllegalArgumentException(NO_MATCH);
 		}
-		ScopeBuildPatternCreator creator = new ScopeBuildPatternCreator();
+		SimpleScopeBuildPatternCreator creator = new SimpleScopeBuildPatternCreator();
 		creator.languageDescr = languageDescr;
 		creator.nameMatcher = NAME_PATTERN.matcher(creator.languageDescr);
 		creator.epMatcher = EP_PATTERN.matcher(creator.languageDescr);
 		creator.methodMatcher = METHOD_PATTERN.matcher(creator.languageDescr);
 		creator.buildMatcher = BUILD_PATTERN.matcher(creator.languageDescr);
 		creator.importMatcher = IMPORT_PATTERN.matcher(creator.languageDescr);
-		creator.getDslName();
-		creator.getEntryPointMethod();
-		creator.getChainMethods();
-		creator.getBuildMethodName();
-		creator.getImports();
+		creator.optionalMethodMatcher = OPTIONAL_METHODS_PATTERN.matcher(creator.languageDescr);
 		return creator;
 	}
 	
@@ -97,54 +95,50 @@ public class ScopeBuildPatternCreator {
 	 * @return ordered java.util.Map containing methodname parametersType. 
 	 */
 	public Map<String,String> getChainMethods(){
-		if(this.chainMethods != null)
-			return this.chainMethods;
-		this.chainMethods = new LinkedHashMap<String,String>();
-		this.nextScopeMethods = new LinkedHashMap<String,LinkedHashMap<String,Boolean>>();
-		while(this.methodMatcher.find()){
-			String method = methodMatcher.group();
-			String methodName = "";
-			String type = "";
-			//get methodName
-			this.methodNameMatcher = METHOD_NAME_PATTERN.matcher(method);
-			if(this.methodNameMatcher.find()){
-				methodName = methodNameMatcher.group().substring(1);
-			}
-			//parameter Type
-			Matcher parameterTypeMatcher = PARAMETER_TYPE_PATTERN.matcher(method);
-			if(parameterTypeMatcher.find()){
-				type = parameterTypeMatcher.group().substring(1);
-			}
-			//next callable Methods from this one on
-			Matcher nextScopeMatcher = NEXT_SCOPES_PATTERN.matcher(method);
-			if(nextScopeMatcher.find()){ //TODO exception if only optional ones given, or done by regex?
-				String nextScopes = nextScopeMatcher.group();
-				Matcher singleScope = SINGLE_SCOPE_PATTERN.matcher(nextScopes);
-				LinkedHashMap<String, Boolean> nextScopesForMethod = new LinkedHashMap<String, Boolean>();
-				String nextScope = "";
-				while(singleScope.find()){
-					String scopeMethodName = singleScope.group();
-					boolean optional = false;
-					if(scopeMethodName.endsWith("?")){
-						optional = true;
-						nextScope = scopeMethodName.substring(0,scopeMethodName.length()-1);
-					}else
-						nextScope = scopeMethodName;
-					nextScopesForMethod.put(nextScope, new Boolean(optional));
-				}
-				this.nextScopeMethods.put(methodName, nextScopesForMethod);
-			}
-			this.chainMethods.put(methodName,type); // TODO Exception if Methods NextScopeMethod points on Method that doesn't exist
+		if(this.chainMethods == null){
+			this.chainMethods = new LinkedHashMap<String,String>();
+			while(this.methodMatcher.find())
+				putMethodInMap(methodMatcher.group(), this.chainMethods);
 		}
 		return this.chainMethods;
 	}
 	
+	public Map<String,String> getOptionalMethods() {
+		if(this.optionalMethods == null){
+			this.optionalMethods = new LinkedHashMap<String,String>();
+			while(this.optionalMethodMatcher.find())
+				putMethodInMap(optionalMethodMatcher.group(), this.optionalMethods);
+		}
+		return this.optionalMethods;
+	}
 	
-	
-	public Map<String, LinkedHashMap<String, Boolean>> getNextMethods() {
-		if(this.chainMethods == null || this.nextScopeMethods == null)
+	public Map<String, String> getNextMethods() {
+		if(this.chainMethods == null)
 			this.getChainMethods();
-		return this.nextScopeMethods;
+		if(this.optionalMethods == null)
+			this.getOptionalMethods();
+		if(this.nextMethods == null){
+			this.nextMethods = new LinkedHashMap<>();
+			Object[] methodNames = this.chainMethods.keySet().toArray();
+			Object[] optionalMethodNames = this.optionalMethods.keySet().toArray();
+			retrieveNextMethods(methodNames, false);
+			retrieveNextMethods(optionalMethodNames, true);
+		}
+		return this.nextMethods;
+	}
+	
+	private void retrieveNextMethods(Object[] methodNames, boolean optional) {
+		for (int i = 0; i<methodNames.length; i++)
+        {
+			if(!optional && !optionalMethods.isEmpty() && i == methodNames.length-1)
+				nextMethods.put((String)methodNames[i], optionalMethods.entrySet().iterator().next().getKey());
+				//if optionalMethods are available, the last mandatory method has the first optional as next one
+			else if(i == methodNames.length-1) // else the build method is next one
+				nextMethods.put((String)methodNames[i], this.getBuildMethodName());
+			else{
+				nextMethods.put((String)methodNames[i],(String)methodNames[i+1]);
+			}
+		}
 	}
 
 	public String getBuildMethodName(){
@@ -170,5 +164,23 @@ public class ScopeBuildPatternCreator {
 		return imports;
 	}
 	
+	private void putMethodInMap(String methodDesc, Map<String,String> methodMap){
+		String methodName = "";
+		String type = "";
+		//initialize parameter Matcher with found method description
+		this.methodNameMatcher = METHOD_NAME_PATTERN.matcher(methodDesc);
+		if(this.methodNameMatcher.find()){
+			String tmpName = methodNameMatcher.group();
+			methodName = tmpName.substring(0, tmpName.length()-1);
+		}
+		Matcher parameterTypeMatcher = PARAMETER_TYPE_PATTERN.matcher(methodDesc);
+		if(parameterTypeMatcher.find()){
+			String tmpType = parameterTypeMatcher.group();
+			type = tmpType.substring(1, tmpType.length()-1);
+		}
+		if(methodName.equals("") || type.equals(""))
+			throw new IllegalArgumentException(WRONG_DECLARATION);
+		methodMap.put(methodName,type);
+	}
 
 }

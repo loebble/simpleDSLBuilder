@@ -5,32 +5,41 @@ import de.htwg.user.User;
 
 
 public class UserBuilder {
-
+	//mandatory Attributes
 	private String firstNameValue;
 	private String lastNameValue;
 	private String emailValue;
-	private String phoneValue;
-	private int ageValue;
 	private Address addressValue;
 
+	//optional Attributes
+	private String phoneValue;
+	private boolean phoneValueIsSet = false;
+	private int ageValue;
+	private boolean ageValueIsSet = false;
 
+	//mandatory Scopes
 	private final FirstNameScope firstNameScope;
 	private final LastNameScope lastNameScope;
 	private final EmailScope emailScope;
+	private final AddressScope addressScope;
+
+	private final BuildScope buildScope;
+
+	//optional Scopes
 	private final PhoneScope phoneScope;
 	private final AgeScope ageScope;
-	private final AddressScope addressScope;
-	private final BuildScope buildScope;
 
 
 	private UserBuilder(){
 		this.firstNameScope = this.new FirstNameScope();
 		this.lastNameScope = this.new LastNameScope();
 		this.emailScope = this.new EmailScope();
+		this.addressScope = this.new AddressScope();
+
+		this.buildScope = this.new BuildScope();
+
 		this.phoneScope = this.new PhoneScope();
 		this.ageScope = this.new AgeScope();
-		this.addressScope = this.new AddressScope();
-		this.buildScope = this.new BuildScope();
 
 	}
 
@@ -39,9 +48,9 @@ public class UserBuilder {
 	    * Entry point method. This method provides access to the DSL.
 	    * Use a static import in your code to use the DSL without context.
 	    */
-	    public static UserBuilder user() {
+	    public static FirstNameScope user() {
 	    	UserBuilder builder = new UserBuilder();
-	    	return builder;
+	    	return builder.firstNameScope;
 	    }
 
 	    /**
@@ -75,36 +84,10 @@ public class UserBuilder {
 	    */
 	    public class EmailScope {
 
-	    	public PhoneScope email (String val) {
+	    	public AddressScope email (String val) {
 	    		//TODO auto generated chain method codeblock
 	    		//You probably want to check the val
 	    		UserBuilder.this.emailValue = val;
-	    		return UserBuilder.this.phoneScope;
-	    	}
-
-	    }
-	    /**
-	    * Generated Scope Class for method order
-	    */
-	    public class PhoneScope {
-
-	    	public AgeScope phone (String val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.phoneValue = val;
-	    		return UserBuilder.this.ageScope;
-	    	}
-
-	    }
-	    /**
-	    * Generated Scope Class for method order
-	    */
-	    public class AgeScope {
-
-	    	public AddressScope age (int val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.ageValue = val;
 	    		return UserBuilder.this.addressScope;
 	    	}
 
@@ -114,10 +97,40 @@ public class UserBuilder {
 	    */
 	    public class AddressScope {
 
-	    	public BuildScope address (Address val) {
+	    	public PhoneScope address (Address val) {
 	    		//TODO auto generated chain method codeblock
 	    		//You probably want to check the val
 	    		UserBuilder.this.addressValue = val;
+	    		return UserBuilder.this.phoneScope;
+	    	}
+
+	    }
+	    
+
+	    /**
+	    * Generated Optional Scope Class
+	    */
+	    public class PhoneScope extends BuildScope{
+
+	    	public AgeScope phone (String val) {
+	    		//TODO auto generated chain method codeblock
+	    		//You probably want to check the val
+	    		UserBuilder.this.phoneValue = val;
+	    		UserBuilder.this.phoneValueIsSet = true;
+	    		return UserBuilder.this.ageScope;
+	    	}
+
+	    }
+	    /**
+	    * Generated Optional Scope Class
+	    */
+	    public class AgeScope extends BuildScope{
+
+	    	public BuildScope age (int val) {
+	    		//TODO auto generated chain method codeblock
+	    		//You probably want to check the val
+	    		UserBuilder.this.ageValue = val;
+	    		UserBuilder.this.ageValueIsSet = true;
 	    		return UserBuilder.this.buildScope;
 	    	}
 
@@ -126,7 +139,7 @@ public class UserBuilder {
 
 	    /**
 	    *
-	    * Generated build method
+	    * Generated Build Scope
 	    */
 	    public class BuildScope {
 
@@ -136,9 +149,12 @@ public class UserBuilder {
 	    		modelInstance.setFirstName(UserBuilder.this.firstNameValue); 
 	    		modelInstance.setLastName(UserBuilder.this.lastNameValue); 
 	    		modelInstance.setEmail(UserBuilder.this.emailValue); 
-	    		modelInstance.setPhone(UserBuilder.this.phoneValue); 
-	    		modelInstance.setAge(UserBuilder.this.ageValue); 
 	    		modelInstance.setAddress(UserBuilder.this.addressValue); 
+
+	    		if(phoneValueIsSet)
+	    			modelInstance.setPhone(UserBuilder.this.phoneValue); 
+	    		if(ageValueIsSet)
+	    			modelInstance.setAge(UserBuilder.this.ageValue); 
 
 	    		return modelInstance;
 	    	}

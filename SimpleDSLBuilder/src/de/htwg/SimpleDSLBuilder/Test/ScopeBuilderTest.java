@@ -1,7 +1,6 @@
 package de.htwg.SimpleDSLBuilder.Test;
 
 import static de.htwg.SimpleDSLBuilder.Model.DSLModels.*;
-import static de.htwg.generated.User.UserBuilder.user;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,17 +8,14 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.antlr.v4.parse.ScopeParser;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 import org.stringtemplate.v4.StringRenderer;
 
 import de.htwg.SimpleDSLBuilder.Creator.SimpleScopeBuildPatternCreator;
-import de.htwg.user.Address;
-import de.htwg.user.User;
 
-public class SimpleScopeBuilderTest {
+public class ScopeBuilderTest {
 
 	public static void main(String[] args) {
 		
@@ -29,10 +25,10 @@ public class SimpleScopeBuilderTest {
 			System.out.println("doesn't exist");
 			templateDirecorty.mkdirs();
 		} else System.out.println("exists "+templateDirecorty.getAbsolutePath());
-		STGroup group = new STGroupFile(templateDirecorty+"/SimpleScopeBuilderTemplate.stg");
+		STGroup group = new STGroupFile(templateDirecorty+"/ScopeBuilderTemplate.stg");
 		group.registerRenderer(String.class, new StringRenderer());
 		ST simpleBT = group.getInstanceOf("BuilderTemplate");
-		SimpleScopeBuildPatternCreator builder = SimpleScopeBuildPatternCreator.getInstance(userSimpleScopeDescription);
+		SimpleScopeBuildPatternCreator builder = SimpleScopeBuildPatternCreator.getInstance(userScopeDescription);
 		String targetPackage = "de.htwg.generated.User";
 		simpleBT.add("packageName",targetPackage);
 		simpleBT.add("builder",builder);
@@ -61,5 +57,4 @@ public class SimpleScopeBuilderTest {
         	System.out.print(methodName +"-"+ paramType );
         }
 	}
-	
 }

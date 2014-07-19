@@ -6,33 +6,42 @@ package <packageName>;
 <builder.imports:{imp| import <imp>;<\n>}>
 
 public class <builder.dslName>Builder {
-
+	//mandatory Attributes
 	<builder.chainMethods.keys:{k|<createAttributes(k,builder.chainMethods.(k))>}>
+	//optional Attributes
+	<builder.optionalMethods.keys:{k|<createOptionalAttributes(k,builder.optionalMethods.(k))>}>
+	//mandatory Scopes
+	<builder.chainMethods.keys:{k|<createScopeAttributes(k)>}>
+	<createScopeAttributes(builder.buildMethodName)>
+	//optional Scopes
+	<builder.optionalMethods.keys:{k|<createScopeAttributes(k)>}>
 		
-	<builder.chainMethods.keys:{k|<createScopeAttributes(k)>}>	<createScopeAttributes(builder.buildMethodName)>
-	
 	private <builder.dslName>Builder(){
-		<builder.chainMethods.keys:{k|<instantiateScopes(k)>}>		<instantiateScopes(builder.buildMethodName)>
+		<builder.chainMethods.keys:{k|<instantiateScopes(k)>}>
+		<instantiateScopes(builder.buildMethodName)>
+		<builder.optionalMethods.keys:{k|<instantiateScopes(k)>}>
 	}
 	
-	<createEPMethod(builder.entryPointMethod, builder.dslName)>
+	<createEPMethod(builder.entryPointMethod, builder.dslName,first(builder.chainMethods.keys))>
 	
 	<builder.chainMethods.keys:{k |<createScopeClass(builder.dslName,k,builder.chainMethods.(k),builder.nextMethods.(k))>}>
 	
-	<createBuildScopeClass(builder.dslName,builder.buildMethodName,builder.chainMethods)>
+	<builder.optionalMethods.keys:{k |<createOptionalScopeClass(builder.dslName,k,builder.optionalMethods.(k),builder.nextMethods.(k),builder.buildMethodName)>}>
+	
+	<createBuildScopeClass(builder.dslName,builder.buildMethodName,builder.chainMethods,builder.optionalMethods)>
 
 }
 >>
 
-createEPMethod(methodHeader, builderName) ::= <<
+createEPMethod(methodHeader, builderName, firstMethodName) ::= <<
     /**
     *
     * Entry point method. This method provides access to the DSL.
     * Use a static import in your code to use the DSL without context.
     */
-    public static <builderName>Builder <methodHeader>() {
+    public static <firstMethodName; format="cap">Scope <methodHeader>() {
     	<builderName>Builder builder = new <builderName>Builder();
-    	return builder;
+    	return builder.<firstMethodName>Scope;
     }
 >>
 
@@ -53,10 +62,28 @@ createScopeClass(builderName, methodName, parameterType, nextMethod) ::= <<
     
 >>
 
-createBuildScopeClass(builderName, methodName, chainMethods) ::= <<
+createOptionalScopeClass(builderName, methodName, parameterType, nextMethod, buildMethodName) ::= <<
+    /**
+    * Generated Optional Scope Class
+    */
+    public class <methodName;format="cap">Scope extends <buildMethodName;format="cap">Scope{
+    	
+    	public <nextMethod;format="cap">Scope <methodName> (<parameterType> val) {
+    		//TODO auto generated chain method codeblock
+    		//You probably want to check the val
+    		<builderName>Builder.this.<methodName>Value = val;
+    		<builderName>Builder.this.<methodName>ValueIsSet = true;
+    		return <builderName>Builder.this.<nextMethod>Scope;
+    	}
+    
+    }
+    
+>>
+
+createBuildScopeClass(builderName, methodName, chainMethods, optionalMethods) ::= <<
     /**
     *
-    * Generated build method
+    * Generated Build Scope
     */
     public class <methodName;format="cap">Scope {
     	
@@ -64,24 +91,10 @@ createBuildScopeClass(builderName, methodName, chainMethods) ::= <<
     		//TODO auto generated build method codeblock
     		<builderName> modelInstance = new <builderName>();
     		<chainMethods.keys:{m |modelInstance.set<m;format="cap">(<builderName>Builder.this.<m>Value); <\n>}>
+    		<optionalMethods.keys:{om |if(<om>ValueIsSet)<\n>	modelInstance.set<om;format="cap">(<builderName>Builder.this.<om>Value); <\n>}>
     		return modelInstance;
     	}
     
-    }
-    
->>
-
-
-createChainMethod(builderName,methodName, parameterType) ::= <<
-
-    /**
-    * Generated chain method.
-    *
-    */
-    public <builderName>Builder <methodName> (<parameterType> val) {
-    	//TODO auto generated chain method codeblock
-    	this.<methodName>Value = val;
-    	return this;
     }
     
 >>
@@ -97,3 +110,8 @@ this.<methodName>Scope = this.new <methodName;format="cap">Scope();<\n>
 createAttributes(methodName, parameterType) ::= <<
 private <parameterType> <methodName>Value;<\n>
 >>
+createOptionalAttributes(methodName, parameterType) ::= <<
+private <parameterType> <methodName>Value;
+private boolean <methodName>ValueIsSet = false;<\n>
+>>
+

@@ -26,13 +26,23 @@ public class DSLModels {
 			+ ".imp=(de.htwg.user.Address)"
 			+ ".build=build";
 	
-	public final static String userScopeDescription = "dslName=User"
+	public final static String userSimpleScopeDescription = "dslName=User"
 			+ ".ep=user.m=firstName(String)"
 			+ ".m=lastName(String)"
 			+ ".m=email(String)"
-			+ ".m=phone(String)"
-			+ ".m=age(int)"
 			+ ".m=address(Address)"
+			+ ".om=phone(String)"
+			+ ".om=age(int)"
+			+ ".imp=(de.htwg.user.Address, de.htwg.user.User)"
+			+ ".build=build";
+	
+	public final static String userScopeDescription = "dslName=User"
+			+ ".ep=user.m=firstName:String(lastName)"
+			+ ".m=lastName:String(email, phone?, age?)"
+			+ ".m=address(Address)"
+			+ ".m=phone:String()"
+			+ ".m=email:String(address)"
+			+ ".m=age(int)"
 			+ ".imp=(de.htwg.user.Address, de.htwg.user.User)"
 			+ ".build=build";
 	

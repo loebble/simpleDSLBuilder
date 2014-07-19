@@ -46,4 +46,9 @@ public class User {
 		this.address = address;
 	}
 
+	@Override
+	public String toString() {
+		return "firstName: "+firstName + "lastName: " + lastName +"email: "+email+ "address: " + address + "phone: " + phone + "age: " + age;
+	}
+	
 }
