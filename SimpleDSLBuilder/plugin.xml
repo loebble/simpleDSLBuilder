@@ -10,7 +10,7 @@
       <!-- @generated User -->
       <package
             uri="http://de.htwg.test"
-            class="de.htwg.user.emf.UserModel.UserPackage"
+            class="de.htwg.generated.emf.user.UserModel.UserPackage"
             genModel="emfmodel/User.genmodel"/>
    </extension>
 

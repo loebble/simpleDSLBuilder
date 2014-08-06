@@ -37,14 +37,12 @@ public class DSLModels {
 			+ ".build=build";
 	
 	public final static String userScopeDescription = "dslName=User"
-			+ ".ep=user.m=firstName:String(lastName)"
-			+ ".m=lastName:String(email, phone?, age?)"
-			+ ".m=address(Address)"
-			+ ".m=phone:String()"
-			+ ".m=email:String(address)"
-			+ ".m=age(int)"
-			+ ".imp=(de.htwg.user.Address, de.htwg.user.User)"
-			+ ".build=build";
+			+ ".ep=user.m=firstName:String{lastName}"
+			+ ".m=lastName:String{email}"
+			+ ".m=email:String{address}"
+			+ ".m=address:Address{buildUser,phone?,age?}"
+			+ ".imp={de.htwg.user.Address, de.htwg.user.User}"
+			+ ".build=buildUser";
 	
 
 	public static SimpleBuildPatternCreator createSimpleBuilderModel() {

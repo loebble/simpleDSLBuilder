@@ -1,4 +1,4 @@
-package de.htwg.generated.MailDSL;
+package de.htwg.generated.builderSimple;
 
 
 public class MailerBuilder {

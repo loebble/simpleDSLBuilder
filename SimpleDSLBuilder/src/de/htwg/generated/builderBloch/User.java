@@ -1,11 +1,10 @@
-package de.htwg.generated.UserDSL;
+package de.htwg.generated.builderBloch;
 
 import de.htwg.user.Address;
 
 public class User {
 
 	private final String firstName;
-	private final String lastName;
 	private final String email;
 	private final String phoneNumber;
 	private final int age;
@@ -15,7 +14,6 @@ public class User {
 	public static class UserBuilder{
 
 		private String firstName;
-		private String lastName;
 		private String email;
 		private String phoneNumber;
 		private int age;
@@ -37,10 +35,9 @@ public class User {
 		    * Generated chain method.
 		    *
 		    */
-		    public UserBuilder name(String firstName, String lastName) {
+		    public UserBuilder name(String firstName) {
 		    	//TODO auto generated chain method codeblock
 		    	this.firstName = firstName; 
-		    	this.lastName = lastName; 
 
 		    	return this;
 		    }
@@ -102,7 +99,6 @@ public class User {
 
 	private User(UserBuilder builder){
 		this.firstName = builder.firstName; 
-		this.lastName = builder.lastName; 
 		this.email = builder.email; 
 		this.phoneNumber = builder.phoneNumber; 
 		this.age = builder.age; 

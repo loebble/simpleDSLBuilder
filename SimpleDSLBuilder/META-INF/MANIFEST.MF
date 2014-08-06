@@ -12,7 +12,13 @@ Export-Package: de.htwg.user.emfGenerated.UserModel,
  de.htwg.user.emfGenerated.UserModel.util,
  de.htwg.user.emf.UserModel,
  de.htwg.user.emf.UserModel.impl,
- de.htwg.user.emf.UserModel.util
+ de.htwg.user.emf.UserModel.util,
+ UserModel,
+ UserModel.impl,
+ UserModel.util,
+ de.htwg.generated.emf.user.UserModel,
+ de.htwg.generated.emf.user.UserModel.impl,
+ de.htwg.generated.emf.user.UserModel.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy

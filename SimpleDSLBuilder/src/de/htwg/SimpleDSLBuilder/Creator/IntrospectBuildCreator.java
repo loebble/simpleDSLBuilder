@@ -1,14 +1,16 @@
 package de.htwg.SimpleDSLBuilder.Creator;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.xml.type.internal.RegEx.REUtil;
 
 public class IntrospectBuildCreator {
 	private Class modelClass;
+	private Set<String> primitiveTypes;
 
 	private String dslName;
 	private String entryPointMethod;
@@ -20,15 +22,16 @@ public class IntrospectBuildCreator {
 
 	private IntrospectBuildCreator() {}
 
-	public IntrospectBuildCreator(String fullyQUalifiedModelName) {
+	public static IntrospectBuildCreator getInstance(String fullyQUalifiedModelName) {
+		IntrospectBuildCreator creator = new IntrospectBuildCreator();
 		try {
-			this.modelClass = Class.forName(fullyQUalifiedModelName);
+			creator.modelClass = Class.forName(fullyQUalifiedModelName);
+			creator.getSetterMethods();
 		} catch (ClassNotFoundException e) {
 			System.err.println("The Class at " + fullyQUalifiedModelName
 					+ " was not found.");
 		}
-
-		getSetterMethods();
+		return creator;
 	}
 
 	public Map<String, String> getSetterMethods() {

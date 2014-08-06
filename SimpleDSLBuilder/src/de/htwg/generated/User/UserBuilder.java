@@ -12,9 +12,9 @@ public class UserBuilder {
 	private Address addressValue;
 
 	//optional Attributes
-	private String phoneValue;
+	private  phoneValue;
 	private boolean phoneValueIsSet = false;
-	private int ageValue;
+	private  ageValue;
 	private boolean ageValueIsSet = false;
 
 	//mandatory Scopes
@@ -23,7 +23,7 @@ public class UserBuilder {
 	private final EmailScope emailScope;
 	private final AddressScope addressScope;
 
-	private final BuildScope buildScope;
+	private final BuildUserScope buildUserScope;
 
 	//optional Scopes
 	private final PhoneScope phoneScope;
@@ -36,10 +36,7 @@ public class UserBuilder {
 		this.emailScope = this.new EmailScope();
 		this.addressScope = this.new AddressScope();
 
-		this.buildScope = this.new BuildScope();
-
-		this.phoneScope = this.new PhoneScope();
-		this.ageScope = this.new AgeScope();
+		this.buildUserScope = this.new BuildUserScope();
 
 	}
 
@@ -57,104 +54,62 @@ public class UserBuilder {
 	    * Generated Scope Class for method order
 	    */
 	    public class FirstNameScope {
-
-	    	public LastNameScope firstName (String val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.firstNameValue = val;
-	    		return UserBuilder.this.lastNameScope;
-	    	}
-
+	    	    public LastNameScope lastName (String val) {
+	    	    		//TODO auto generated chain method codeblock
+	    	    		//You probably want to check the val
+	    	    		UserBuilder.this.lastNameValue = val;
+	    	    		return UserBuilder.this.lastNameScope;
+	    	    	}
 	    }
 	    /**
 	    * Generated Scope Class for method order
 	    */
 	    public class LastNameScope {
-
-	    	public EmailScope lastName (String val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.lastNameValue = val;
-	    		return UserBuilder.this.emailScope;
-	    	}
-
+	    	    public EmailScope email (String val) {
+	    	    		//TODO auto generated chain method codeblock
+	    	    		//You probably want to check the val
+	    	    		UserBuilder.this.emailValue = val;
+	    	    		return UserBuilder.this.emailScope;
+	    	    	}
 	    }
 	    /**
 	    * Generated Scope Class for method order
 	    */
 	    public class EmailScope {
-
-	    	public AddressScope email (String val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.emailValue = val;
-	    		return UserBuilder.this.addressScope;
-	    	}
-
+	    	    public AddressScope address (Address val) {
+	    	    		//TODO auto generated chain method codeblock
+	    	    		//You probably want to check the val
+	    	    		UserBuilder.this.addressValue = val;
+	    	    		return UserBuilder.this.addressScope;
+	    	    	}
 	    }
 	    /**
 	    * Generated Scope Class for method order
 	    */
 	    public class AddressScope {
-
-	    	public PhoneScope address (Address val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.addressValue = val;
-	    		return UserBuilder.this.phoneScope;
-	    	}
-
+	    	    public BuildUserScope buildUser ( val) {
+	    	    		//TODO auto generated chain method codeblock
+	    	    		//You probably want to check the val
+	    	    		UserBuilder.this.buildUserValue = val;
+	    	    		return UserBuilder.this.buildUserScope;
+	    	    	}
 	    }
 	    
 
-	    /**
-	    * Generated Optional Scope Class
-	    */
-	    public class PhoneScope extends BuildScope{
-
-	    	public AgeScope phone (String val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.phoneValue = val;
-	    		UserBuilder.this.phoneValueIsSet = true;
-	    		return UserBuilder.this.ageScope;
-	    	}
-
-	    }
-	    /**
-	    * Generated Optional Scope Class
-	    */
-	    public class AgeScope extends BuildScope{
-
-	    	public BuildScope age (int val) {
-	    		//TODO auto generated chain method codeblock
-	    		//You probably want to check the val
-	    		UserBuilder.this.ageValue = val;
-	    		UserBuilder.this.ageValueIsSet = true;
-	    		return UserBuilder.this.buildScope;
-	    	}
-
-	    }
-	    
 
 	    /**
 	    *
 	    * Generated Build Scope
 	    */
-	    public class BuildScope {
+	    public class BuildUserScope {
 
-	    	public User build () {
+	    	public User buildUser () {
 	    		//TODO auto generated build method codeblock
 	    		User modelInstance = new User();
 	    		modelInstance.setFirstName(UserBuilder.this.firstNameValue); 
 	    		modelInstance.setLastName(UserBuilder.this.lastNameValue); 
 	    		modelInstance.setEmail(UserBuilder.this.emailValue); 
 	    		modelInstance.setAddress(UserBuilder.this.addressValue); 
-
-	    		if(phoneValueIsSet)
-	    			modelInstance.setPhone(UserBuilder.this.phoneValue); 
-	    		if(ageValueIsSet)
-	    			modelInstance.setAge(UserBuilder.this.ageValue); 
 
 	    		return modelInstance;
 	    	}

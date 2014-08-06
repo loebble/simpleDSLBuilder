@@ -1,7 +1,6 @@
 package de.htwg.SimpleDSLBuilder.Test;
 
 import static de.htwg.SimpleDSLBuilder.Model.DSLModels.*;
-import static de.htwg.generated.User.UserBuilder.user;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +32,7 @@ public class SimpleScopeBuilderTest {
 		group.registerRenderer(String.class, new StringRenderer());
 		ST simpleBT = group.getInstanceOf("BuilderTemplate");
 		SimpleScopeBuildPatternCreator builder = SimpleScopeBuildPatternCreator.getInstance(userSimpleScopeDescription);
-		String targetPackage = "de.htwg.generated.User";
+		String targetPackage = "de.htwg.generated.builderSimpleScope";
 		simpleBT.add("packageName",targetPackage);
 		simpleBT.add("builder",builder);
 		String res = simpleBT.render();

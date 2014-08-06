@@ -25,7 +25,7 @@ public class BlochBuilderTest {
 		} else System.out.println("exists "+templateDirecorty.getAbsolutePath());
 		STGroup group = new STGroupFile(templateDirecorty+"/BlochBuilderTemplate.stg");
 		ST simpleBT = group.getInstanceOf("BuilderTemplate");
-		String targetPackage = "de.htwg.generated.UserDSL";
+		String targetPackage = "de.htwg.generated.builderBloch";
 		simpleBT.add("packageName",targetPackage);
 		simpleBT.add("builder",builder);
 		String res = simpleBT.render();

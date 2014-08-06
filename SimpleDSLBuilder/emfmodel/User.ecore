@@ -3,7 +3,8 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="UserModel" nsURI="http://de.htwg.test" nsPrefix="de.htwg.user">
   <eClassifiers xsi:type="ecore:EClass" name="User">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstName" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="null"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="null"
+        derived="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" transient="true"
         defaultValueLiteral="null"/>

@@ -29,7 +29,7 @@ public class SimpleMailerTest {
 		group.registerRenderer(String.class, new StringRenderer());
 		ST simpleBT = group.getInstanceOf("BuilderTemplate");
 		SimpleBuildPatternCreator builder = createSimpleBuilderModel();
-		String targetPackage = "de.htwg.generated.MailDSL";
+		String targetPackage = "de.htwg.generated.builderSimple";
 		simpleBT.add("packageName",targetPackage);
 		simpleBT.add("builder",builder);
 		String res = simpleBT.render();
