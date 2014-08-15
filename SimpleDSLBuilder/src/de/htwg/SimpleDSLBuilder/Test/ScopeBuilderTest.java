@@ -1,6 +1,7 @@
 package de.htwg.SimpleDSLBuilder.Test;
 
 import static de.htwg.SimpleDSLBuilder.Model.DSLModels.userScopeDescription;
+import static de.htwg.generated.User.UserBuilder.user;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +16,8 @@ import org.stringtemplate.v4.STGroupFile;
 import org.stringtemplate.v4.StringRenderer;
 
 import de.htwg.SimpleDSLBuilder.Creator.ScopeBuildPatternCreator;
+import de.htwg.user.Address;
+import de.htwg.user.User;
 
 public class ScopeBuilderTest {
 
@@ -35,8 +38,10 @@ public class ScopeBuilderTest {
 		simpleBT.add("builder",builder);
 		String res = simpleBT.render();
 //		System.out.println(res);
-		printStringMap(builder.getMandatoryMethods());
-//		printNextMethods(builder.getNextMethods());
+//		printStringMap(builder.getOptionalMethods());
+//		System.out.println(builder.getEntryPointMethod());
+//		printNextMethods(builder.getNextOptionalMethods());
+		printNextMethods(builder.getNextMethods());
 		try {
 			String packagePath = targetPackage.replace(".", "\\");
 			String pathForDSL = projectPath+"\\src\\"+packagePath;
@@ -50,6 +55,7 @@ public class ScopeBuilderTest {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	static void printStringMap(Map<String,String> chains){
@@ -66,10 +72,11 @@ public class ScopeBuilderTest {
         {
         	String methodName= (String) entry.getKey();
         	List<String> nextOnes= (List<String>) entry.getValue();
-        	System.out.println(methodName +" nextOnes-");
+        	System.out.println(methodName +" nextOnes:");
         	for (String next : nextOnes) {
 				System.out.print(next + " ");
 			}
+        	System.out.println();
         }
 	}
 }

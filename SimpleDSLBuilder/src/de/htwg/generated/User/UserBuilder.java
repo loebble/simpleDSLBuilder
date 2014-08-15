@@ -12,9 +12,9 @@ public class UserBuilder {
 	private Address addressValue;
 
 	//optional Attributes
-	private  phoneValue;
+	private String phoneValue;
 	private boolean phoneValueIsSet = false;
-	private  ageValue;
+	private int ageValue;
 	private boolean ageValueIsSet = false;
 
 	//mandatory Scopes
@@ -24,10 +24,6 @@ public class UserBuilder {
 	private final AddressScope addressScope;
 
 	private final BuildUserScope buildUserScope;
-
-	//optional Scopes
-	private final PhoneScope phoneScope;
-	private final AgeScope ageScope;
 
 
 	private UserBuilder(){
@@ -45,8 +41,9 @@ public class UserBuilder {
 	    * Entry point method. This method provides access to the DSL.
 	    * Use a static import in your code to use the DSL without context.
 	    */
-	    public static FirstNameScope user() {
+	    public static FirstNameScope user(String val) {
 	    	UserBuilder builder = new UserBuilder();
+	    	builder.firstNameValue = val;
 	    	return builder.firstNameScope;
 	    }
 
@@ -87,11 +84,22 @@ public class UserBuilder {
 	    * Generated Scope Class for method order
 	    */
 	    public class AddressScope {
-	    	    public BuildUserScope buildUser ( val) {
+	    	    public AddressScope optionalPhone (String val) {
 	    	    		//TODO auto generated chain method codeblock
 	    	    		//You probably want to check the val
-	    	    		UserBuilder.this.buildUserValue = val;
-	    	    		return UserBuilder.this.buildUserScope;
+	    	    		UserBuilder.this.phoneValue = val;
+	    	    		UserBuilder.this.phoneValueIsSet = true;
+	    	    		return UserBuilder.this.addressScope;
+	    	    	}public AddressScope optionalAge (int val) {
+	    	    		//TODO auto generated chain method codeblock
+	    	    		//You probably want to check the val
+	    	    		UserBuilder.this.ageValue = val;
+	    	    		UserBuilder.this.ageValueIsSet = true;
+	    	    		return UserBuilder.this.addressScope;
+	    	    	}
+	    	    public User buildUser () {
+	    	    		//TODO auto generated chain method codeblock
+	    	    		return UserBuilder.this.buildUserScope.buildUser();
 	    	    	}
 	    }
 	    
@@ -110,6 +118,11 @@ public class UserBuilder {
 	    		modelInstance.setLastName(UserBuilder.this.lastNameValue); 
 	    		modelInstance.setEmail(UserBuilder.this.emailValue); 
 	    		modelInstance.setAddress(UserBuilder.this.addressValue); 
+
+	    		if(phoneValueIsSet)
+	    			modelInstance.setPhone(UserBuilder.this.phoneValue); 
+	    		if(ageValueIsSet)
+	    			modelInstance.setAge(UserBuilder.this.ageValue); 
 
 	    		return modelInstance;
 	    	}

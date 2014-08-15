@@ -5,10 +5,10 @@
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
     operationReflection="true" importOrganizing="true">
   <foreignModel>User.ecore</foreignModel>
-  <genPackages prefix="User" basePackage="de.htwg.generated.emf.user" disposableProviderFactory="true"
+  <genPackages prefix="EMFUser" basePackage="de.htwg.generated.emf" disposableProviderFactory="true"
       ecorePackage="User.ecore#/">
     <genClasses ecoreClass="User.ecore#//User">
-      <genFeatures children="true" createChild="true" propertyCategory="" ecoreFeature="ecore:EAttribute User.ecore#//User/firstName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute User.ecore#//User/firstName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute User.ecore#//User/lastName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute User.ecore#//User/email"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference User.ecore#//User/address"/>

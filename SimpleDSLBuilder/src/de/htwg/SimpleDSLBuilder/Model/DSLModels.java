@@ -37,10 +37,13 @@ public class DSLModels {
 			+ ".build=build";
 	
 	public final static String userScopeDescription = "dslName=User"
-			+ ".ep=user.m=firstName:String{lastName}"
+			+ ".ep=user{firstName}"
+			+ ".m=firstName:String{lastName}"
 			+ ".m=lastName:String{email}"
 			+ ".m=email:String{address}"
-			+ ".m=address:Address{buildUser,phone?,age?}"
+			+ ".m=address:Address{buildUser,phone,age}"
+			+ ".om=phone:String"
+			+ ".om=age:int"
 			+ ".imp={de.htwg.user.Address, de.htwg.user.User}"
 			+ ".build=buildUser";
 	
