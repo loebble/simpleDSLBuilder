@@ -27,7 +27,10 @@ Export-Package: de.htwg.user.emfGenerated.UserModel,
  User.util,
  de.htwg.generated.emf.EMFUser,
  de.htwg.generated.emf.EMFUser.impl,
- de.htwg.generated.emf.EMFUser.util
+ de.htwg.generated.emf.EMFUser.util,
+ de.htwg.generated.emf.Forum,
+ de.htwg.generated.emf.Forum.impl,
+ de.htwg.generated.emf.Forum.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy

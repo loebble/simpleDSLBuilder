@@ -16,8 +16,6 @@ import org.stringtemplate.v4.STGroupFile;
 import org.stringtemplate.v4.StringRenderer;
 
 import de.htwg.SimpleDSLBuilder.Creator.ScopeBuildPatternCreator;
-import de.htwg.user.Address;
-import de.htwg.user.User;
 
 public class ScopeBuilderTest {
 

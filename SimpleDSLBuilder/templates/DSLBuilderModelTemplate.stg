@@ -1,0 +1,138 @@
+BuilderTemplate(builderModel,targetPackage) ::= <<
+<! BuilderDSL-Template for DSLBuilderModelTemplate!>
+package <targetPackage>;
+
+<builderModel.imports:{imp| import <imp>;<\n>}>
+
+public class <builderModel.modelName>Builder {
+	//required Attributes
+	<builderModel.classes.keys:{k|<createAttributes(k,builderModel.mandatoryMethods.(k))>}>
+	//optional Attributes
+	<builderModel.optionalMethods.keys:{k|<createOptionalAttributes(k,builderModel.optionalMethods.(k))>}>
+	//mandatory Scopes
+	<builderModel.mandatoryMethods:{k|<createScopeAttributes(k)>}>
+	<createScopeAttributes(builderModel.buildMethodName)>
+<!	//optional Scopes
+	<builderModel.optionalMethods:{k|<createScopeAttributes(k)>}> !>
+		
+	private <builderModel.dslName>Builder(){
+		<builderModel.mandatoryMethods.keys:{k|<instantiateScopes(k)>}>
+		<! <builderModel.optionalMethods.keys:{k|<instantiateScopes(k)>}> !>
+		<instantiateScopes(builderModel.buildMethodName)>
+	}
+	
+	<createEPMethod(builderModel.entryPointMethod, builderModel.dslName,builderModel.firstMethod,builderModel.mandatoryMethods.(builderModel.firstMethod))>
+	
+	<builderModel.mandatoryMethods.keys:{k |<createScopeClass(builderModel.dslName,builderModel.buildMethodName,k,builderModel.mandatoryMethods,builderModel.optionalMethods,builderModel.nextMethods.(k),builderModel.nextOptionalMethods.(k),builderModel.lastMethods)>}>
+	
+	<! <builderModel.optionalMethods.keys:{k |<createOptionalScopeClass(builderModel.dslName,k,builderModel.optionalMethods.(k),builderModel.nextMethods.(k),builderModel.buildMethodName)>}> !>
+	
+	<createBuildScopeClass(builderModel.dslName,builderModel.buildMethodName,builderModel.mandatoryMethods,builderModel.optionalMethods)>
+
+}
+>>
+
+createEPMethod(methodHeader, builderModelName, firstMethodName, firstType) ::= <<
+    /**
+    *
+    * Entry point method. This method provides access to the DSL.
+    * Use a static import in your code to use the DSL without context.
+    */
+    public static <firstMethodName; format="cap">Scope <methodHeader>(<firstType> val) {
+    	<builderModelName>Builder builderModel = new <builderModelName>Builder();
+    	builderModel.<firstMethodName>Value = val;
+    	return builderModel.<firstMethodName>Scope;
+    }
+>>
+
+createScopeClass(dslName,builderModelName, methodName, mandatoryMethods, optionalMethods,nextMethods, nextOptionalMethods,lastMethods) ::= <<
+    /**
+    * Generated Scope Class for method order
+    */
+    public class <methodName;format="cap">Scope {
+    	<nextMethods:{k |<createScopeMethod(dslName,mandatoryMethods.(k), k)>}>
+    	<nextOptionalMethods:{k |<createOptionalScopeMethod(dslName,optionalMethods.(k),k,methodName)>}>
+    	<lastMethods.(methodName):{buildMethod|<createBuildMethodCall(methodName,buildMethod,dslName,dslName)>}>
+    }
+    
+>>
+
+createScopeMethod(builderModelName, parameterType, methodName) ::= <<
+    public <methodName;format="cap">Scope <methodName> (<parameterType> val) {
+    		//TODO auto generated chain method codeblock
+    		//You probably want to check the val
+    		<builderModelName>Builder.this.<methodName>Value = val;
+    		return <builderModelName>Builder.this.<methodName>Scope;
+    	}
+>>
+
+createOptionalScopeMethod(builderModelName, parameterType, methodName, scopeName) ::= <<
+    public <scopeName;format="cap">Scope optional<methodName;format="cap"> (<parameterType> val) {
+    		//TODO auto generated chain method codeblock
+    		//You probably want to check the val
+    		<builderModelName>Builder.this.<methodName>Value = val;
+    		<builderModelName>Builder.this.<methodName>ValueIsSet = true;
+    		return <builderModelName>Builder.this.<scopeName>Scope;
+    	}
+>>
+
+createOptionalScopeClass(builderModelName, methodName, parameterType, nextMethod, buildMethodName) ::= <<
+    /**
+    * Generated Optional Scope Class
+    */
+    public class <methodName;format="cap">Scope extends <buildMethodName;format="cap">Scope{
+    	
+    	public <nextMethod;format="cap">Scope <methodName> (<parameterType> val) {
+    		//TODO auto generated chain method codeblock
+    		//You probably want to check the val
+    		<builderModelName>Builder.this.<methodName>Value = val;
+    		<builderModelName>Builder.this.<methodName>ValueIsSet = true;
+    		return <builderModelName>Builder.this.<nextMethod>Scope;
+    	}
+    
+    }
+    
+>>
+
+createBuildMethodCall(methodName,builderModelMethodName,dslName,builderModelName) ::= <<
+    public <dslName> <builderModelMethodName> () {
+    		//TODO auto generated chain method codeblock
+    		return <builderModelName>Builder.this.<builderModelMethodName>Scope.<builderModelMethodName>();
+    	}
+>>
+
+createBuildScopeClass(builderModelName, methodName, mandatoryMethods, optionalMethods) ::= <<
+    /**
+    *
+    * Generated Build Scope
+    */
+    public class <methodName;format="cap">Scope {
+    	
+    	public <builderModelName> <methodName> () {
+    		//TODO auto generated build method codeblock
+    		<builderModelName> modelInstance = new <builderModelName>();
+    		<mandatoryMethods.keys:{m |modelInstance.set<m;format="cap">(<builderModelName>Builder.this.<m>Value); <\n>}>
+    		<optionalMethods.keys:{om |if(<om>ValueIsSet)<\n>	modelInstance.set<om;format="cap">(<builderModelName>Builder.this.<om>Value); <\n>}>
+    		return modelInstance;
+    	}
+    
+    }
+    
+>>
+
+createScopeAttributes(methodName) ::= <<
+private final <methodName;format="cap">Scope <methodName>Scope;<\n>
+>>
+
+instantiateScopes(methodName) ::= <<
+this.<methodName>Scope = this.new <methodName;format="cap">Scope();<\n>
+>>
+
+createAttributes(methodName, parameterType) ::= <<
+private <parameterType> <methodName>Value;<\n>
+>>
+createOptionalAttributes(methodName, parameterType) ::= <<
+private <parameterType> <methodName>Value;
+private boolean <methodName>ValueIsSet = false;<\n>
+>>
+
